@@ -45,3 +45,5 @@ results.append(“Average Change :” +“$”+str(avg_Chng))
 results.append("Winner: " win)
 
 # write the analysis into file
+    writer = csv.writer(f)
+    writer.main(data)
