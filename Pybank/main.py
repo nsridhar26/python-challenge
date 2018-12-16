@@ -1,71 +1,79 @@
 import os
 import csv
-#relative path of CSV file
-file_to_load = os.path.join("Pybank","budget_data.csv")
-#file_to_output = os.path.join("Analysis", "budget_analysis.txt")?
-#open and read csv
-with open(file_to_load, newline="") as csvfile:
-    csvreader = csv.reader(csvfile, delimiter=",")
-    cvs_header = next(reader)
-    # read the header row first
-    print(f"Header: {csv_header}")
-    num_lines = 0
-    # read through each row of data after the header
-    for row in csvreader:
-#skip the data in the header
-        row = next(reader)
-        num_lines += 1
-    print("Number of months:")
-    print(num_lines)
-#print number of months in the data set
-#fname = input("file_to_load: ")
-        
-#with open(fname, 'r') as f:
-    #for line in f:
-        
+#create path
+budget_dt= os.path.join('..', "Pybank", "budget_data.csv")
+print(budget_dt)
 
-#calculate the amount of revenue
-# create a for loop that grabs the second column and prints the sum
-revenue = 0
-for row in csvreader:
-    revenue += float(row[2])
-    print("net amount of Profit/Losses ")
-    print(revenue)
-#average change in "profit/Losses"
-for row in csvreader:
-    avg_change = 0
-    avg_change = ((row -(row-1))/2)
-    avg_change += avg_change
-#append avg_change to csv file
-csvfile.append(avg_change)
-print("Average Change: $")
-print(avg_change)
-#calculate the greatest increase in profits (date and amount) over the entire period
-""" for row in csvreader
-    #max_avg_change=(avg_change)
-    # date of max avg change
-    date_max_avg_change=row(max_avg_change[row(0)])
-        print("Greatest Increase in Profits: ")
-        print(date_max_avg_change)
-        print(max_avg_change)
-#greatest decrease in losses (date & amount) over the entire period
-    min_avg_change=(avg_change)
-    # date of min avg change
-    date_min_avg_change=row(min_avg_change[row(0)])
-        print("Greatest Decrease in Profits: ")
-        print(date_min_avg_change)
-        print(date_min_avg_change)
-# Specify the file to write to
-output_path = os.path.join("..", "output", "new.csv")
+# Declared/set variable and set to 0 or list/dictionary
+total_months = 0
+total_PL = 0
+first_mnth = 0
+last_mnth = 0.0
+prev_mnth = 0.0
+monthlyPLChng = 0
+avgPLChange=0
+avgChng=[]
+linenum = 0
+max_avgChng=0
+min_avgChng=0
+results=[]
 
-# Open the file using "write" mode. Specify the variable to hold the contents
-with open(output_path, 'w', newline='') as csvfile:
+#create lists to store Profit/Loss change
+avgMonthlyChngPL = []
 
-    # Initialize csv.writer
-    csvwriter = csv.writer(csvfile, delimiter=',')
+# to open csvfile
+with open(budget_dt, 'r', newline='') as csvfile:
+   rownum = csvfile.readlines()
+   total_months = len(rownum) - 1
+# read csv file
+   csvreader = csv.reader(csvfile, delimiter=',')
+   next(csvreader)
+   #print(csvreader)
+   #csv_header = next(csvreader)
+   #print(f"CSV Header: {csv_header}")
+   for row in csvreader:
+       #print(row)
+       #count total PL in csv file
+       total_PL += float(row[1])
+       #create a variable that will count the PL change
+       #monthlyPLChng = int(row[1]) - prev_mnth
+       #prev_mnth = int(row[1])
+       #add changes in new list
+       #avgMonthlyChngPL.append(monthlyPLChng)
+       #avgPLChange = round(sum(avgMonthlyChngPL)/total_months)
 
-    # Write the first row (column headers)
-    csvwriter.writerow(['First Name', 'Last Name', 'SSN'])
+       if (linenum == 0):
+           first_mnth = float(row[1])
+           prev_mnth = float(row[1])
+       elif (linenum == total_months-1):
+           last_mnth = float(row[1])
+       if  (linenum > 0):
+           avgChng.append((row[0] , float(row[1]) - prev_mnth))
+           prev_mnth = float(row[1])
+       linenum += 1
 
-    # Write the second row
-    csvwriter.writerow(['Caleb', 'Frost', '505-80-2901']) """
+print(avgChng)
+avg_Chng = (last_mnth - first_mnth)/ (total_months-1)
+
+# Pull greatest profit and greatest loss
+max_avgChng=max(avgChng)
+min_avgChng=min(avgChng)
+# Add financial analysis into single results list
+results.append(“Total_Months : ” + “$”+str(round(total_months)))
+results.append(“Total :” + “$”+str(round(total_PL)))
+results.append(“Average Change :” +“$”+str(avg_Chng))
+results.append(“Greatest Increase in Profit ” + ” ” + str(max_avgChng) + “)”)
+results.append(“Greatest Decrease in Profit ” + ” ” + str(min_avgChng) + “)”)
+# Open new result file text file
+results=[]
+results = open(“Financial Analysis.txt”, mode=“w”)
+# write the analysis into file
+results.write(f”Financial Analysis for {budget_dt}:\n”)
+results.write(“...........................................\n”)
+results.write(f”Total Months:{total_months}:\n”)
+results.write(f”Total :{total_PL}:\n”)
+results.write(f”Average Change :{avg_Chng}:\n”)
+results.write(f”Greatest Increase in Revenue:{max_avgChng}:\n”)
+results.write(f”Greatest decrease in Revenue:{min_avgChng}:\n”)
+
+results.close ()
